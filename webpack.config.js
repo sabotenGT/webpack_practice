@@ -5,6 +5,7 @@ const path = require('path');
 const { mainModule } = require('process');
 
 module.exports = {
+  mode: 'development',
   devtool: 'source-map',
   entry: './src/javascripts/main.js',
   output: {
@@ -14,13 +15,23 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(ts|tsx)/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'ts-loader',
+        },
+      },
+      {
         test: /\.js/,
         exclude: /node_modules/,
         use: [
           {
             loader: 'babel-loader',
             options: {
-              presets: [['@babel/preset-env', { targets: '>0.25%, not dead' }]],
+              presets: [
+                ['@babel/preset-env', { targets: '>0.25%, not dead' }],
+                '@babel/preset-react',
+              ],
             },
           },
         ],
@@ -34,7 +45,7 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true,
+              sourceMap: false,
             },
           },
           {
@@ -43,13 +54,22 @@ module.exports = {
         ],
       },
       {
-        test: /\.(png|jpg)/,
+        test: /\.(png|jpg|jpeg)/,
         use: [
           {
             loader: 'file-loader',
             options: {
               esModule: false,
               name: 'images/[name].[ext]',
+            },
+          },
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              mozjpeg: {
+                progressive: true,
+                quality: 65,
+              },
             },
           },
         ],
